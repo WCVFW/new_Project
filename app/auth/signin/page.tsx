@@ -183,15 +183,6 @@ function SignInContent() {
               </div>
               <p className="text-xs mt-1 text-blue-700">This area is restricted to authorized administrators only.</p>
             </div>
-
-            {/* Demo Credentials (Remove in production) */}
-            <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <div className="text-center">
-                <p className="text-xs text-gray-600 mb-2">Demo Admin Credentials:</p>
-                <p className="text-xs font-mono text-gray-700">Email: wcvfw2019@gmail.com</p>
-                <p className="text-xs font-mono text-gray-700">Password: 12345678@#$</p>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </motion.div>
