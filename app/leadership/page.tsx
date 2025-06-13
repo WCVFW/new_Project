@@ -13,7 +13,7 @@ const leaders = [
     id: 1,
     name: "Mr. Gunalan Lavanyan",
     title: "Founder & Chairman",
-    image: "/gunalan.jpg?height=300&width=300",
+    image: "/gunalan.jpg?height=200&width=300",
     bio: "A seasoned media professional with over 2 decades of experience, Mr. Gunalan Lavanyan is a passionate advocate for social justice. Since initiating the We Can Voice for Women movement in 2016, he has worked tirelessly to reshape public perceptions and attitudes toward women. His leadership combines creative communication, grassroots mobilisation, and strategic vision.",
     achievements: ["UN Women Champion", "Forbes 40 Under 40", "Harvard Alumni Award"],
     social: {
@@ -103,7 +103,8 @@ export default function LeadershipPage() {
                         <img
                           src={leader.image || "/placeholder.svg"}
                           alt={leader.name}
-                          className="w-full h-full lg:h-half object-cover"
+                          className="w-full h-[800px] lg:h-half object-cover"
+
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-pink-900/50 to-transparent" />
 

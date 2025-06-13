@@ -48,7 +48,7 @@ const galleryItems = [
     title: "Entrepreneurship Workshop",
     category: "Economic",
     date: "December 2023",
-    location: "Mumbai, India",
+    location: "Chennai, Tamil Nadu",
     description: "Training women entrepreneurs in business development and financial literacy.",
     participants: "150+ entrepreneurs",
   },

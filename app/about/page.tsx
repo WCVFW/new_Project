@@ -41,10 +41,10 @@ export default function AboutPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-pink-50 to-purple-50">
+      <section className="py-12 md:py-16 px-4 bg-gradient-to-br from-pink-50 to-purple-50">
         <motion.div className="max-w-4xl mx-auto text-center" initial="initial" animate="animate" variants={fadeInUp}>
-          <h1 className="text-5xl font-bold text-gray-800 mb-6">About WomenRise</h1>
-          <p className="text-xl text-gray-600 leading-relaxed">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4 md:mb-6">About WomenRise</h1>
+          <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
             Founded in 2015, WomenRise has been at the forefront of women's empowerment, creating opportunities and
             breaking barriers for women across the globe.
           </p>
@@ -52,17 +52,18 @@ export default function AboutPage() {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-16 px-4">
+      <section className="py-12 md:py-16 px-4">
         <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
+              className="bg-white p-6 rounded-lg shadow-sm border border-gray-100"
             >
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Our Mission</h2>
-              <p className="text-gray-600 leading-relaxed mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Our Mission</h2>
+              <p className="text-gray-600 leading-relaxed mb-3">
                 To empower women worldwide by providing access to education, healthcare, and economic opportunities that
                 enable them to reach their full potential and become leaders in their communities.
               </p>
@@ -77,9 +78,10 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
+              className="bg-white p-6 rounded-lg shadow-sm border border-gray-100"
             >
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">Our Vision</h2>
-              <p className="text-gray-600 leading-relaxed mb-4">
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Our Vision</h2>
+              <p className="text-gray-600 leading-relaxed mb-3">
                 A world where every woman has equal opportunities to succeed, lead, and make meaningful contributions to
                 society, regardless of her background or circumstances.
               </p>
@@ -93,13 +95,16 @@ export default function AboutPage() {
       </section>
 
       {/* Values */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section className="py-12 md:py-16 px-4 bg-gray-50">
         <motion.div className="max-w-6xl mx-auto" initial="initial" whileInView="animate" viewport={{ once: true }}>
-          <motion.h2 className="text-4xl font-bold text-center text-gray-800 mb-12" variants={fadeInUp}>
+          <motion.h2
+            className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-8 md:mb-12"
+            variants={fadeInUp}
+          >
             Our Values
           </motion.h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => (
               <motion.div
                 key={value.title}
@@ -108,11 +113,11 @@ export default function AboutPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="text-center p-6 h-full hover:shadow-lg transition-shadow">
-                  <CardContent>
-                    <value.icon className="h-12 w-12 text-pink-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-800 mb-3">{value.title}</h3>
-                    <p className="text-gray-600">{value.description}</p>
+                <Card className="text-center p-4 h-full hover:shadow-md transition-shadow">
+                  <CardContent className="pt-4">
+                    <value.icon className="h-10 w-10 text-pink-600 mx-auto mb-3" />
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{value.title}</h3>
+                    <p className="text-gray-600 text-sm">{value.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -122,7 +127,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team Section */}
-      <section className="py-16 px-4">
+      <section className="py-12 md:py-16 px-4">
         <motion.div
           className="max-w-4xl mx-auto text-center"
           initial="initial"
@@ -130,8 +135,8 @@ export default function AboutPage() {
           viewport={{ once: true }}
           variants={fadeInUp}
         >
-          <h2 className="text-4xl font-bold text-gray-800 mb-8">Our Impact Story</h2>
-          <p className="text-lg text-gray-600 leading-relaxed mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Our Impact Story</h2>
+          <p className="text-lg text-gray-600 leading-relaxed mb-6">
             Since our founding, we've grown from a small grassroots organization to a global movement. Our programs have
             reached over 10,000 women across 25 countries, providing scholarships, healthcare access, and business
             training.

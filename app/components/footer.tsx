@@ -93,7 +93,7 @@ export default function Footer() {
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             <div className="flex items-center space-x-3">
               <Mail className="h-5 w-5 text-pink-400" />
-              <span className="text-gray-300">info@voiceforwomen.org</span>
+              <span className="text-gray-300">support@wecanvoiceforwomen.com</span>
             </div>
             <div className="flex items-center space-x-3">
               <Phone className="h-5 w-5 text-pink-400" />
@@ -101,7 +101,7 @@ export default function Footer() {
             </div>
             <div className="flex items-center space-x-3">
               <MapPin className="h-5 w-5 text-pink-400" />
-              <span className="text-gray-300">Mumbai, India</span>
+              <span className="text-gray-300">Chennai, Tamil Nadu</span>
             </div>
           </div>
 
