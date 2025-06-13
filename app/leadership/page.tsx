@@ -11,11 +11,11 @@ import ReadMoreText from "../components/read-more-text"
 const leaders = [
   {
     id: 1,
-    name: "Dr. Sarah Johnson",
-    title: "Founder & CEO",
-    image: "/placeholder.svg?height=300&width=300",
-    bio: "Dr. Sarah Johnson is a visionary leader with over 20 years of experience in international development and women's rights advocacy. She founded Voice for Women Foundation in 2015 after witnessing firsthand the challenges faced by women in underserved communities during her work with the United Nations. Under her leadership, the foundation has grown from a small grassroots organization to a global movement impacting thousands of lives. Dr. Johnson holds a PhD in International Development from Harvard University and has been recognized with numerous awards for her humanitarian work. She is a frequent speaker at international conferences and has authored several publications on women's empowerment and sustainable development. Her passion for creating systemic change drives the foundation's innovative approach to addressing gender inequality worldwide.",
-    // achievements: ["UN Women Champion", "Forbes 40 Under 40", "Harvard Alumni Award"],
+    name: "Mr. Gunalan Lavanyan",
+    title: "Founder & Chairman",
+    image: "/gunalan.jpg?height=300&width=300",
+    bio: "A seasoned media professional with over 2 decades of experience, Mr. Gunalan Lavanyan is a passionate advocate for social justice. Since initiating the We Can Voice for Women movement in 2016, he has worked tirelessly to reshape public perceptions and attitudes toward women. His leadership combines creative communication, grassroots mobilisation, and strategic vision.",
+    achievements: ["UN Women Champion", "Forbes 40 Under 40", "Harvard Alumni Award"],
     social: {
       linkedin: "#",
       twitter: "#",
@@ -24,10 +24,10 @@ const leaders = [
   },
   {
     id: 2,
-    name: "Maria Rodriguez",
-    title: "Chief Operating Officer",
-    image: "/placeholder.svg?height=300&width=300",
-    bio: "Maria Rodriguez brings exceptional operational expertise to Voice for Women Foundation, overseeing the implementation of programs across 35 countries. With a background in international business and nonprofit management, she has been instrumental in scaling the foundation's impact while maintaining the highest standards of accountability and transparency. Maria previously served as Regional Director for several major international NGOs, where she developed innovative approaches to program delivery and community engagement. She holds an MBA from Wharton School and speaks five languages fluently. Her multicultural background and deep understanding of diverse communities enable her to build strong partnerships and ensure culturally sensitive program implementation. Maria is passionate about creating sustainable systems that empower local communities to drive their own development.",
+    name: "Mrs. Oorvasi Gunalan",
+    title: "Secretary & Treasurer",
+    image: "/oorvasi.jpg?height=300&width=300",
+    bio: "With a strong academic background in mathematics and an unyielding passion for community welfare, Mrs. Oorvasi Gunalan exemplifies compassion and resilience. She has played a pivotal role in shaping the Foundation’s operations and outreach. Her dedication to counselling women, managing programs, and sustaining grassroots engagement makes her an invaluable force behind the organisation’s impact.",
     achievements: ["Wharton Leadership Award", "International Development Excellence", "Community Impact Recognition"],
     social: {
       linkedin: "#",
@@ -37,10 +37,10 @@ const leaders = [
   },
   {
     id: 3,
-    name: "Dr. Amara Okafor",
-    title: "Director of Programs",
-    image: "/placeholder.svg?height=300&width=300",
-    bio: "Dr. Amara Okafor leads the foundation's program development and implementation, bringing deep expertise in education, healthcare, and economic empowerment initiatives. With a doctorate in Public Health from Johns Hopkins University, she has dedicated her career to addressing health disparities and improving access to quality healthcare for marginalized communities. Before joining Voice for Women, Dr. Okafor worked with the World Health Organization and Doctors Without Borders, implementing health programs in conflict-affected regions. Her research on maternal health and women's healthcare access has been published in leading medical journals. She is particularly passionate about integrating health services with education and economic empowerment programs to create holistic support systems for women and girls.",
+    name: "Mr. Deepak Radhakrishnan",
+    title: "Head - Advisory Board",
+    image: "/deepak.jpg?height=300&width=300",
+    bio: "He is a seasoned professional, qualified as a Taxation Advocate and CPA (USA), with deep expertise in accounting and taxation. He is passionately committed to uplifting business standards in India, especially among underserved communities. With a visionary mindset, he focuses on nurturing entrepreneurs and empowering women to build sustainable ventures. Deepak believes in transforming potential into professionalism, one business at a time. His mission is to create a generation of confident professionals and change-makers across India.",
     achievements: ["WHO Excellence Award", "Public Health Leadership", "Medical Research Recognition"],
     social: {
       linkedin: "#",
@@ -50,10 +50,10 @@ const leaders = [
   },
   {
     id: 4,
-    name: "Jennifer Chen",
-    title: "Chief Technology Officer",
-    image: "/placeholder.svg?height=300&width=300",
-    bio: "Jennifer Chen revolutionizes how Voice for Women Foundation leverages technology to amplify its impact and reach. With over 15 years of experience in tech innovation and digital transformation, she leads the development of cutting-edge platforms that connect women globally and provide access to resources, education, and opportunities. Jennifer previously held senior positions at major tech companies, where she specialized in building scalable solutions for social impact. She holds a Master's degree in Computer Science from MIT and is a recognized expert in using artificial intelligence and machine learning for social good. Under her leadership, the foundation has launched several award-winning digital platforms that have transformed how women access support and resources worldwide.",
+    name: "Prof Mr. A.Md.Abdulkadhar",
+    title: "Advisory Board",
+    image: "/abdulkadar.jpeg?height=300&width=300",
+    bio: "Professor A. Mohamed Abdul Kadhar is a distinguished educationist dedicated to the advancement of women. With a wealth of knowledge, he has authored a compelling array of articles and books that spotlight women winners, achievers, and entrepreneurs. Known for his inspiring and confident speaking style, he serves as a trusted consultant to a variety of educational institutions. His impactful work has been recognised with numerous prestigious awards. Currently, he is playing a pivotal role in shaping the We Can Voice for Women Foundation, offering valuable insights and expertise to empower women's voices and initiatives.",
     achievements: ["Tech for Good Award", "MIT Innovation Prize", "Digital Impact Recognition"],
     social: {
       linkedin: "#",
@@ -96,14 +96,14 @@ export default function LeadershipPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 w-[90%]">
+                <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300">
                   <CardContent className="p-0">
                     <div className={`grid lg:grid-cols-2 gap-0 ${index % 2 === 1 ? "lg:grid-flow-col-dense" : ""}`}>
                       <div className={`relative ${index % 2 === 1 ? "lg:col-start-2" : ""}`}>
                         <img
                           src={leader.image || "/placeholder.svg"}
                           alt={leader.name}
-                          className="w-full h-[400px] object-cover"
+                          className="w-full h-full lg:h-half object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-pink-900/50 to-transparent" />
 
