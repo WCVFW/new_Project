@@ -1,23 +1,14 @@
 import type { NextRequest } from "next/server"
-import { getServerSession } from "next-auth"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
-import { v4 as uuidv4 } from "uuid"
 
 export async function POST(request: NextRequest) {
   try {
-    // Check authentication and authorization
-    const session = await getServerSession()
-    if (!session || session.user?.email !== "wcvfw2019@gmail.com") {
-      return Response.json({ success: false, message: "Unauthorized" }, { status: 401 })
-    }
-
     const formData = await request.formData()
     const files = formData.getAll("files") as File[]
     const type = formData.get("type") as string
     const title = formData.get("title") as string
     const description = formData.get("description") as string
-    const category = formData.get("category") as string
 
     if (!files || files.length === 0) {
       return Response.json({ success: false, message: "No files provided" }, { status: 400 })
@@ -34,9 +25,8 @@ export async function POST(request: NextRequest) {
       const buffer = Buffer.from(bytes)
 
       // Generate unique filename
-      const fileId = uuidv4()
-      const fileExt = file.name.split(".").pop() || ""
-      const filename = `${fileId}.${fileExt}`
+      const timestamp = Date.now()
+      const filename = `${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`
       const filepath = path.join(uploadDir, filename)
 
       // Write file to local storage
@@ -44,13 +34,12 @@ export async function POST(request: NextRequest) {
 
       // Create file record
       const fileRecord = {
-        id: fileId,
+        id: `${timestamp}-${Math.random().toString(36).substr(2, 9)}`,
         filename,
         originalName: file.name,
         type,
         title,
         description,
-        category,
         size: file.size,
         uploadedAt: new Date().toISOString(),
         url: `/uploads/${type}/${filename}`,
