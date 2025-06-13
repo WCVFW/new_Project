@@ -228,7 +228,7 @@ export default function Header() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                {/* <Link href="/admin">
+                <Link href="/admin">
                   <Button
                     variant="outline"
                     size="sm"
@@ -237,7 +237,7 @@ export default function Header() {
                     <Settings className="h-4 w-4 mr-2" />
                     Admin Panel
                   </Button>
-                </Link> */}
+                </Link>
               </motion.div>
             )}
 
