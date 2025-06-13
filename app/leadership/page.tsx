@@ -15,7 +15,7 @@ const leaders = [
     title: "Founder & CEO",
     image: "/placeholder.svg?height=300&width=300",
     bio: "Dr. Sarah Johnson is a visionary leader with over 20 years of experience in international development and women's rights advocacy. She founded Voice for Women Foundation in 2015 after witnessing firsthand the challenges faced by women in underserved communities during her work with the United Nations. Under her leadership, the foundation has grown from a small grassroots organization to a global movement impacting thousands of lives. Dr. Johnson holds a PhD in International Development from Harvard University and has been recognized with numerous awards for her humanitarian work. She is a frequent speaker at international conferences and has authored several publications on women's empowerment and sustainable development. Her passion for creating systemic change drives the foundation's innovative approach to addressing gender inequality worldwide.",
-    achievements: ["UN Women Champion", "Forbes 40 Under 40", "Harvard Alumni Award"],
+    // achievements: ["UN Women Champion", "Forbes 40 Under 40", "Harvard Alumni Award"],
     social: {
       linkedin: "#",
       twitter: "#",
@@ -96,14 +96,14 @@ export default function LeadershipPage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
               >
-                <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300">
+                <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 w-[90%]">
                   <CardContent className="p-0">
                     <div className={`grid lg:grid-cols-2 gap-0 ${index % 2 === 1 ? "lg:grid-flow-col-dense" : ""}`}>
                       <div className={`relative ${index % 2 === 1 ? "lg:col-start-2" : ""}`}>
                         <img
                           src={leader.image || "/placeholder.svg"}
                           alt={leader.name}
-                          className="w-full h-96 lg:h-full object-cover"
+                          className="w-full h-[400px] object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-pink-900/50 to-transparent" />
 
@@ -135,13 +135,13 @@ export default function LeadershipPage() {
                           <h2 className="text-3xl font-bold text-gray-800 mb-2">{leader.name}</h2>
                           <p className="text-xl text-pink-600 font-medium mb-4">{leader.title}</p>
 
-                          <div className="flex flex-wrap gap-2 mb-6">
+                          {/* <div className="flex flex-wrap gap-2 mb-6">
                             {leader.achievements.map((achievement) => (
                               <Badge key={achievement} variant="secondary" className="bg-pink-100 text-pink-700">
                                 {achievement}
                               </Badge>
                             ))}
-                          </div>
+                          </div> */}
                         </div>
 
                         <ReadMoreText text={leader.bio} maxLength={300} className="text-gray-600 leading-relaxed" />

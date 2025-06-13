@@ -1,14 +1,15 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useSession, signOut } from "next-auth/react"
 import {
   Upload,
@@ -24,17 +25,34 @@ import {
   Calendar,
   MessageSquare,
   LogOut,
-  CheckCircle,
-  X,
   Eye,
   Shield,
   User,
+  Trash2,
+  Edit,
+  Search,
+  Filter,
+  Download,
 } from "lucide-react"
 import Header from "../components/header"
 import AdminGuard from "../components/admin-guard"
+import { useToast } from "@/components/ui/use-toast"
+import { Progress } from "@/components/ui/progress"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function AdminPage() {
   const { data: session } = useSession()
+  const { toast } = useToast()
   const [uploadProgress, setUploadProgress] = useState(0)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([])
@@ -42,10 +60,42 @@ export default function AdminPage() {
   const [uploadType, setUploadType] = useState<string>("")
   const [mediaTitle, setMediaTitle] = useState("")
   const [mediaDescription, setMediaDescription] = useState("")
+  const [mediaCategory, setMediaCategory] = useState("general")
+  const [searchQuery, setSearchQuery] = useState("")
+  const [filterType, setFilterType] = useState("all")
+  const [sortOrder, setSortOrder] = useState("newest")
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const [previewItem, setPreviewItem] = useState<any>(null)
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<any>(null)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [itemToEdit, setItemToEdit] = useState<any>(null)
+  const [editTitle, setEditTitle] = useState("")
+  const [editDescription, setEditDescription] = useState("")
+  const [editCategory, setEditCategory] = useState("")
+  const [activeTab, setActiveTab] = useState("media")
 
   const imageInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef<HTMLInputElement>(null)
+  const documentInputRef = useRef<HTMLInputElement>(null)
+
+  // Load existing media on component mount
+  useEffect(() => {
+    const fetchMedia = async () => {
+      try {
+        const response = await fetch("/api/admin/media")
+        const data = await response.json()
+        if (data.success) {
+          setUploadedFiles(data.data || [])
+        }
+      } catch (error) {
+        console.error("Error fetching media:", error)
+      }
+    }
+
+    fetchMedia()
+  }, [])
 
   const handleFileSelect = (type: string, files: FileList | null) => {
     if (files && files.length > 0) {
@@ -56,12 +106,20 @@ export default function AdminPage() {
 
   const handleMediaUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) {
-      alert("Please select files to upload")
+      toast({
+        title: "No files selected",
+        description: "Please select files to upload",
+        variant: "destructive",
+      })
       return
     }
 
     if (!mediaTitle.trim()) {
-      alert("Please enter a title for the media")
+      toast({
+        title: "Title required",
+        description: "Please enter a title for the media",
+        variant: "destructive",
+      })
       return
     }
 
@@ -72,13 +130,14 @@ export default function AdminPage() {
       const formData = new FormData()
 
       // Add all selected files
-      Array.from(selectedFiles).forEach((file, index) => {
+      Array.from(selectedFiles).forEach((file) => {
         formData.append(`files`, file)
       })
 
       formData.append("type", uploadType)
       formData.append("title", mediaTitle)
       formData.append("description", mediaDescription)
+      formData.append("category", mediaCategory)
 
       // Simulate upload progress
       const progressInterval = setInterval(() => {
@@ -87,7 +146,7 @@ export default function AdminPage() {
             clearInterval(progressInterval)
             return 90
           }
-          return prev + 10
+          return prev + 5
         })
       }, 200)
 
@@ -103,34 +162,172 @@ export default function AdminPage() {
 
       if (result.success) {
         // Add uploaded files to the list
-        setUploadedFiles((prev) => [...prev, ...result.files])
+        setUploadedFiles((prev) => [...(result.files || []), ...prev])
+
+        toast({
+          title: "Upload successful",
+          description: `${selectedFiles.length} file(s) uploaded successfully`,
+          variant: "default",
+        })
 
         // Reset form
         setSelectedFiles(null)
         setMediaTitle("")
         setMediaDescription("")
+        setMediaCategory("general")
         setUploadType("")
 
         // Reset file inputs
         if (imageInputRef.current) imageInputRef.current.value = ""
         if (videoInputRef.current) videoInputRef.current.value = ""
         if (audioInputRef.current) audioInputRef.current.value = ""
+        if (documentInputRef.current) documentInputRef.current.value = ""
 
         setTimeout(() => setUploadProgress(0), 2000)
       } else {
-        alert("Upload failed: " + result.message)
+        toast({
+          title: "Upload failed",
+          description: result.message || "An error occurred during upload",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Upload error:", error)
-      alert("Upload failed. Please try again.")
+      toast({
+        title: "Upload failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      })
     } finally {
       setIsUploading(false)
     }
   }
 
-  const removeUploadedFile = (index: number) => {
-    setUploadedFiles((prev) => prev.filter((_, i) => i !== index))
+  const handleDeleteMedia = async (id: string) => {
+    try {
+      const response = await fetch(`/api/admin/media/${id}`, {
+        method: "DELETE",
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setUploadedFiles((prev) => prev.filter((file) => file.id !== id))
+        toast({
+          title: "Media deleted",
+          description: "The media item has been deleted successfully",
+          variant: "default",
+        })
+      } else {
+        toast({
+          title: "Deletion failed",
+          description: result.message || "Failed to delete media item",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Delete error:", error)
+      toast({
+        title: "Deletion failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsDeleteModalOpen(false)
+      setItemToDelete(null)
+    }
   }
+
+  const handleUpdateMedia = async () => {
+    if (!itemToEdit) return
+
+    try {
+      const response = await fetch(`/api/admin/media/${itemToEdit.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: editTitle,
+          description: editDescription,
+          category: editCategory,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setUploadedFiles((prev) =>
+          prev.map((file) =>
+            file.id === itemToEdit.id
+              ? { ...file, title: editTitle, description: editDescription, category: editCategory }
+              : file,
+          ),
+        )
+        toast({
+          title: "Media updated",
+          description: "The media item has been updated successfully",
+          variant: "default",
+        })
+      } else {
+        toast({
+          title: "Update failed",
+          description: result.message || "Failed to update media item",
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      console.error("Update error:", error)
+      toast({
+        title: "Update failed",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setIsEditModalOpen(false)
+      setItemToEdit(null)
+    }
+  }
+
+  const openPreview = (item: any) => {
+    setPreviewItem(item)
+    setIsPreviewOpen(true)
+  }
+
+  const openDeleteModal = (item: any) => {
+    setItemToDelete(item)
+    setIsDeleteModalOpen(true)
+  }
+
+  const openEditModal = (item: any) => {
+    setItemToEdit(item)
+    setEditTitle(item.title)
+    setEditDescription(item.description || "")
+    setEditCategory(item.category || "general")
+    setIsEditModalOpen(true)
+  }
+
+  const filteredMedia = uploadedFiles
+    .filter((file) => {
+      // Filter by search query
+      const matchesSearch =
+        file.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        file.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        file.filename?.toLowerCase().includes(searchQuery.toLowerCase())
+
+      // Filter by type
+      const matchesType = filterType === "all" || file.type === filterType
+
+      return matchesSearch && matchesType
+    })
+    .sort((a, b) => {
+      // Sort by date
+      if (sortOrder === "newest") {
+        return new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+      } else {
+        return new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime()
+      }
+    })
 
   const handleSignOut = () => {
     signOut({ callbackUrl: "/" })
@@ -140,7 +337,7 @@ export default function AdminPage() {
     { title: "Total Donations", value: "₹24L", icon: DollarSign, change: "+12%" },
     { title: "Active Users", value: "15,847", icon: Users, change: "+8%" },
     { title: "Newsletter Subscribers", value: "45,231", icon: Mail, change: "+15%" },
-    { title: "Media Items", value: `${uploadedFiles.length + 1234}`, icon: ImageIcon, change: "+5%" },
+    { title: "Media Items", value: `${uploadedFiles.length}`, icon: ImageIcon, change: "+5%" },
   ]
 
   const recentActivities = [
@@ -150,6 +347,39 @@ export default function AdminPage() {
     { type: "media", message: "New video uploaded to gallery", time: "2 hours ago" },
   ]
 
+  const getMediaTypeIcon = (type: string) => {
+    switch (type) {
+      case "image":
+        return <ImageIcon className="h-6 w-6 text-pink-600" />
+      case "video":
+        return <Video className="h-6 w-6 text-purple-600" />
+      case "audio":
+        return <Music className="h-6 w-6 text-rose-600" />
+      case "document":
+        return <FileText className="h-6 w-6 text-blue-600" />
+      default:
+        return <FileText className="h-6 w-6 text-gray-600" />
+    }
+  }
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return bytes + " B"
+    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + " KB"
+    else if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + " MB"
+    else return (bytes / 1073741824).toFixed(1) + " GB"
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
+
   return (
     <AdminGuard>
       <div className="min-h-screen bg-gray-50">
@@ -158,10 +388,10 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Admin Header with User Info */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
               <div>
-                <h1 className="text-4xl font-bold text-gray-800 mb-2">Admin Dashboard</h1>
-                <div className="flex items-center space-x-4">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Admin Dashboard</h1>
+                <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center text-gray-600">
                     <Shield className="h-4 w-4 mr-2 text-pink-600" />
                     <span>Authorized Admin Access</span>
@@ -198,8 +428,8 @@ export default function AdminPage() {
           >
             <Card className="bg-gradient-to-r from-pink-50 to-purple-50 border-pink-200">
               <CardContent className="p-6">
-                <div className="flex items-center">
-                  <div className="bg-pink-100 p-3 rounded-full mr-4">
+                <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                  <div className="bg-pink-100 p-3 rounded-full">
                     <Shield className="h-6 w-6 text-pink-600" />
                   </div>
                   <div>
@@ -215,7 +445,7 @@ export default function AdminPage() {
           </motion.div>
 
           {/* Stats Overview */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.title}
@@ -244,7 +474,7 @@ export default function AdminPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <Tabs defaultValue="media" className="space-y-6">
+              <Tabs defaultValue="media" className="space-y-6" value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="media">Media Upload</TabsTrigger>
                   <TabsTrigger value="content">Content</TabsTrigger>
@@ -260,14 +490,17 @@ export default function AdminPage() {
                         <Upload className="mr-2 h-5 w-5" />
                         Media Upload & Management
                       </CardTitle>
+                      <CardDescription>
+                        Upload and manage images, videos, audio files, and documents for your website
+                      </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                       {/* File Upload Section */}
-                      <div className="grid md:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <Card className="p-4 border-dashed border-2 border-pink-300 hover:border-pink-500 transition-colors">
                           <div className="text-center">
-                            <ImageIcon className="h-12 w-12 text-pink-600 mx-auto mb-3" />
-                            <h3 className="font-semibold mb-2">Upload Images</h3>
+                            <ImageIcon className="h-10 w-10 text-pink-600 mx-auto mb-3" />
+                            <h3 className="font-semibold mb-2">Images</h3>
                             <input
                               ref={imageInputRef}
                               type="file"
@@ -279,16 +512,17 @@ export default function AdminPage() {
                             <Button
                               onClick={() => imageInputRef.current?.click()}
                               className="w-full bg-pink-600 hover:bg-pink-700"
+                              size="sm"
                             >
-                              Choose Images
+                              Choose Files
                             </Button>
                           </div>
                         </Card>
 
                         <Card className="p-4 border-dashed border-2 border-purple-300 hover:border-purple-500 transition-colors">
                           <div className="text-center">
-                            <Video className="h-12 w-12 text-purple-600 mx-auto mb-3" />
-                            <h3 className="font-semibold mb-2">Upload Videos</h3>
+                            <Video className="h-10 w-10 text-purple-600 mx-auto mb-3" />
+                            <h3 className="font-semibold mb-2">Videos</h3>
                             <input
                               ref={videoInputRef}
                               type="file"
@@ -300,16 +534,17 @@ export default function AdminPage() {
                             <Button
                               onClick={() => videoInputRef.current?.click()}
                               className="w-full bg-purple-600 hover:bg-purple-700"
+                              size="sm"
                             >
-                              Choose Videos
+                              Choose Files
                             </Button>
                           </div>
                         </Card>
 
                         <Card className="p-4 border-dashed border-2 border-rose-300 hover:border-rose-500 transition-colors">
                           <div className="text-center">
-                            <Music className="h-12 w-12 text-rose-600 mx-auto mb-3" />
-                            <h3 className="font-semibold mb-2">Upload Audio</h3>
+                            <Music className="h-10 w-10 text-rose-600 mx-auto mb-3" />
+                            <h3 className="font-semibold mb-2">Audio</h3>
                             <input
                               ref={audioInputRef}
                               type="file"
@@ -321,8 +556,31 @@ export default function AdminPage() {
                             <Button
                               onClick={() => audioInputRef.current?.click()}
                               className="w-full bg-rose-600 hover:bg-rose-700"
+                              size="sm"
                             >
-                              Choose Audio
+                              Choose Files
+                            </Button>
+                          </div>
+                        </Card>
+
+                        <Card className="p-4 border-dashed border-2 border-blue-300 hover:border-blue-500 transition-colors">
+                          <div className="text-center">
+                            <FileText className="h-10 w-10 text-blue-600 mx-auto mb-3" />
+                            <h3 className="font-semibold mb-2">Documents</h3>
+                            <input
+                              ref={documentInputRef}
+                              type="file"
+                              accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx"
+                              multiple
+                              onChange={(e) => handleFileSelect("document", e.target.files)}
+                              className="hidden"
+                            />
+                            <Button
+                              onClick={() => documentInputRef.current?.click()}
+                              className="w-full bg-blue-600 hover:bg-blue-700"
+                              size="sm"
+                            >
+                              Choose Files
                             </Button>
                           </div>
                         </Card>
@@ -339,10 +597,11 @@ export default function AdminPage() {
                                   {uploadType === "image" && <ImageIcon className="h-6 w-6 text-pink-600" />}
                                   {uploadType === "video" && <Video className="h-6 w-6 text-purple-600" />}
                                   {uploadType === "audio" && <Music className="h-6 w-6 text-rose-600" />}
+                                  {uploadType === "document" && <FileText className="h-6 w-6 text-blue-600" />}
                                 </div>
-                                <div className="flex-1">
-                                  <p className="font-medium text-sm">{file.name}</p>
-                                  <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                                <div className="flex-1 truncate">
+                                  <p className="font-medium text-sm truncate">{file.name}</p>
+                                  <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
                                 </div>
                               </div>
                             ))}
@@ -370,6 +629,21 @@ export default function AdminPage() {
                                 rows={3}
                               />
                             </div>
+                            <div>
+                              <Label htmlFor="media-category">Category</Label>
+                              <Select value={mediaCategory} onValueChange={setMediaCategory}>
+                                <SelectTrigger id="media-category">
+                                  <SelectValue placeholder="Select category" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="general">General</SelectItem>
+                                  <SelectItem value="events">Events</SelectItem>
+                                  <SelectItem value="programs">Programs</SelectItem>
+                                  <SelectItem value="testimonials">Testimonials</SelectItem>
+                                  <SelectItem value="gallery">Gallery</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
                             <Button
                               onClick={handleMediaUpload}
                               disabled={isUploading || !mediaTitle.trim()}
@@ -388,52 +662,143 @@ export default function AdminPage() {
                             <span>Uploading files...</span>
                             <span>{uploadProgress}%</span>
                           </div>
-                          <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-gradient-to-r from-pink-600 to-purple-600 h-2 rounded-full transition-all duration-300"
-                              style={{ width: `${uploadProgress}%` }}
-                            />
-                          </div>
+                          <Progress value={uploadProgress} className="h-2" />
                         </div>
                       )}
 
-                      {/* Uploaded Files List */}
-                      {uploadedFiles.length > 0 && (
-                        <div>
-                          <h3 className="font-semibold mb-4">Recently Uploaded ({uploadedFiles.length})</h3>
-                          <div className="space-y-3 max-h-60 overflow-y-auto">
-                            {uploadedFiles.map((file, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center justify-between p-3 bg-white rounded-lg border"
-                              >
-                                <div className="flex items-center">
-                                  <div className="mr-3">
-                                    {file.type === "image" && <ImageIcon className="h-6 w-6 text-pink-600" />}
-                                    {file.type === "video" && <Video className="h-6 w-6 text-purple-600" />}
-                                    {file.type === "audio" && <Music className="h-6 w-6 text-rose-600" />}
-                                  </div>
-                                  <div>
-                                    <p className="font-medium text-sm">{file.title}</p>
-                                    <p className="text-xs text-gray-500">{file.filename}</p>
-                                  </div>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <CheckCircle className="h-5 w-5 text-green-600" />
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => removeUploadedFile(index)}
-                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                </div>
-                              </div>
-                            ))}
+                      {/* Media Library */}
+                      <div className="space-y-4">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                          <h3 className="text-lg font-semibold">Media Library</h3>
+                          <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+                            <div className="relative flex-grow">
+                              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                              <Input
+                                placeholder="Search media..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="pl-8"
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <Select value={filterType} onValueChange={setFilterType}>
+                                <SelectTrigger className="w-[110px]">
+                                  <Filter className="h-4 w-4 mr-2" />
+                                  <span className="truncate">
+                                    {filterType === "all"
+                                      ? "All Types"
+                                      : filterType.charAt(0).toUpperCase() + filterType.slice(1)}
+                                  </span>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="all">All Types</SelectItem>
+                                  <SelectItem value="image">Images</SelectItem>
+                                  <SelectItem value="video">Videos</SelectItem>
+                                  <SelectItem value="audio">Audio</SelectItem>
+                                  <SelectItem value="document">Documents</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <Select value={sortOrder} onValueChange={setSortOrder}>
+                                <SelectTrigger className="w-[110px]">
+                                  <span className="truncate">{sortOrder === "newest" ? "Newest" : "Oldest"}</span>
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="newest">Newest</SelectItem>
+                                  <SelectItem value="oldest">Oldest</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
                           </div>
                         </div>
-                      )}
+
+                        {filteredMedia.length === 0 ? (
+                          <div className="text-center py-12 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                            <ImageIcon className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                            <h3 className="text-lg font-medium text-gray-600 mb-1">No media found</h3>
+                            <p className="text-gray-500">
+                              {searchQuery || filterType !== "all"
+                                ? "Try adjusting your search or filters"
+                                : "Upload some media to get started"}
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {filteredMedia.map((file) => (
+                              <Card key={file.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                                <div className="relative h-40 bg-gray-100">
+                                  {file.type === "image" ? (
+                                    <img
+                                      src={file.url || "/placeholder.svg?height=200&width=300"}
+                                      alt={file.title}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="flex items-center justify-center h-full bg-gray-100">
+                                      {getMediaTypeIcon(file.type)}
+                                      <span className="ml-2 text-gray-600">{file.type}</span>
+                                    </div>
+                                  )}
+                                  <Badge
+                                    className={`absolute top-2 right-2 ${
+                                      file.type === "image"
+                                        ? "bg-pink-100 text-pink-700"
+                                        : file.type === "video"
+                                          ? "bg-purple-100 text-purple-700"
+                                          : file.type === "audio"
+                                            ? "bg-rose-100 text-rose-700"
+                                            : "bg-blue-100 text-blue-700"
+                                    }`}
+                                  >
+                                    {file.type}
+                                  </Badge>
+                                </div>
+                                <CardContent className="p-4">
+                                  <div className="flex justify-between items-start mb-2">
+                                    <h4 className="font-medium text-gray-800 truncate" title={file.title}>
+                                      {file.title}
+                                    </h4>
+                                    <Badge variant="outline" className="ml-2 truncate">
+                                      {file.category || "general"}
+                                    </Badge>
+                                  </div>
+                                  <p className="text-xs text-gray-500 mb-3 truncate" title={file.filename}>
+                                    {file.filename}
+                                  </p>
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-xs text-gray-500">{formatDate(file.uploadedAt)}</span>
+                                    <div className="flex space-x-1">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0"
+                                        onClick={() => openPreview(file)}
+                                      >
+                                        <Eye className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0"
+                                        onClick={() => openEditModal(file)}
+                                      >
+                                        <Edit className="h-4 w-4" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                                        onClick={() => openDeleteModal(file)}
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 </TabsContent>
@@ -620,6 +985,178 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+
+        {/* Media Preview Modal */}
+        <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>{previewItem?.title}</DialogTitle>
+            </DialogHeader>
+            <div className="overflow-y-auto max-h-[70vh]">
+              {previewItem?.type === "image" ? (
+                <img
+                  src={previewItem.url || "/placeholder.svg?height=400&width=600"}
+                  alt={previewItem.title}
+                  className="max-w-full mx-auto max-h-[50vh] object-contain"
+                />
+              ) : previewItem?.type === "video" ? (
+                <video
+                  src={previewItem.url}
+                  controls
+                  className="max-w-full mx-auto max-h-[50vh]"
+                  poster="/placeholder.svg?height=400&width=600"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              ) : previewItem?.type === "audio" ? (
+                <div className="bg-gray-100 p-6 rounded-lg text-center">
+                  <Music className="h-16 w-16 text-rose-600 mx-auto mb-4" />
+                  <audio src={previewItem.url} controls className="w-full">
+                    Your browser does not support the audio tag.
+                  </audio>
+                </div>
+              ) : (
+                <div className="bg-gray-100 p-6 rounded-lg text-center">
+                  <FileText className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+                  <p className="mb-4">Document Preview</p>
+                  <Button
+                    as="a"
+                    href={previewItem?.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download Document
+                  </Button>
+                </div>
+              )}
+
+              <div className="mt-6 space-y-4">
+                <div>
+                  <h4 className="text-sm font-semibold text-gray-700">Description</h4>
+                  <p className="text-gray-600">{previewItem?.description || "No description provided."}</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700">File Name</h4>
+                    <p className="text-gray-600 break-all">{previewItem?.filename}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700">Upload Date</h4>
+                    <p className="text-gray-600">
+                      {previewItem?.uploadedAt ? formatDate(previewItem.uploadedAt) : "Unknown"}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700">Category</h4>
+                    <p className="text-gray-600">{previewItem?.category || "General"}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700">File Size</h4>
+                    <p className="text-gray-600">{previewItem?.size ? formatFileSize(previewItem.size) : "Unknown"}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter className="flex justify-between items-center">
+              <div className="flex space-x-2">
+                <Button variant="outline" size="sm" onClick={() => openEditModal(previewItem)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={() => {
+                    setIsPreviewOpen(false)
+                    openDeleteModal(previewItem)
+                  }}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </Button>
+              </div>
+              <Button variant="default" onClick={() => setIsPreviewOpen(false)}>
+                Close
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Media Modal */}
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Media</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-title">Title</Label>
+                <Input
+                  id="edit-title"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  placeholder="Enter media title"
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  placeholder="Enter media description"
+                  rows={3}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-category">Category</Label>
+                <Select value={editCategory} onValueChange={setEditCategory}>
+                  <SelectTrigger id="edit-category">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="general">General</SelectItem>
+                    <SelectItem value="events">Events</SelectItem>
+                    <SelectItem value="programs">Programs</SelectItem>
+                    <SelectItem value="testimonials">Testimonials</SelectItem>
+                    <SelectItem value="gallery">Gallery</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleUpdateMedia}>Save Changes</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation Modal */}
+        <AlertDialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the media item.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => itemToDelete && handleDeleteMedia(itemToDelete.id)}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </AdminGuard>
   )
