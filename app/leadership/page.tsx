@@ -13,7 +13,7 @@ const leaders = [
     id: 1,
     name: "Dr. Sarah Johnson",
     title: "Founder & CEO",
-    image: "/placeholder.svg?height=300&width=300",
+    image: "/gunalan.JPG?height=300&width=300",
     bio: "Dr. Sarah Johnson is a visionary leader with over 20 years of experience in international development and women's rights advocacy. She founded Voice for Women Foundation in 2015 after witnessing firsthand the challenges faced by women in underserved communities during her work with the United Nations. Under her leadership, the foundation has grown from a small grassroots organization to a global movement impacting thousands of lives. Dr. Johnson holds a PhD in International Development from Harvard University and has been recognized with numerous awards for her humanitarian work. She is a frequent speaker at international conferences and has authored several publications on women's empowerment and sustainable development. Her passion for creating systemic change drives the foundation's innovative approach to addressing gender inequality worldwide.",
     achievements: ["UN Women Champion", "Forbes 40 Under 40", "Harvard Alumni Award"],
     social: {
