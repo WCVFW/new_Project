@@ -11,54 +11,54 @@ import ReadMoreText from "../components/read-more-text"
 const leaders = [
   {
     id: 1,
-    name: "Dr. Sarah Johnson",
-    title: "Founder & CEO",
+    name: "Mr. Gunalan Lavanyan",
+    title: "Founder & Chairman",
     image: "/gunalan.JPG?height=300&width=300",
-    bio: "Dr. Sarah Johnson is a visionary leader with over 20 years of experience in international development and women's rights advocacy. She founded Voice for Women Foundation in 2015 after witnessing firsthand the challenges faced by women in underserved communities during her work with the United Nations. Under her leadership, the foundation has grown from a small grassroots organization to a global movement impacting thousands of lives. Dr. Johnson holds a PhD in International Development from Harvard University and has been recognized with numerous awards for her humanitarian work. She is a frequent speaker at international conferences and has authored several publications on women's empowerment and sustainable development. Her passion for creating systemic change drives the foundation's innovative approach to addressing gender inequality worldwide.",
+    bio: "A seasoned media professional with over 2 decades of experience, Mr. Gunalan Lavanyan is a passionate advocate for social justice. Since initiating the We Can Voice for Women movement in 2016, he has worked tirelessly to reshape public perceptions and attitudes toward women. His leadership combines creative communication, grassroots mobilisation, and strategic vision.",
     achievements: ["UN Women Champion", "Forbes 40 Under 40", "Harvard Alumni Award"],
     social: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/gunalancity/",
       twitter: "#",
-      email: "sarah@voiceforwomen.org",
+      email: "chairman@wecanvoiceforwomen.org",
     },
   },
   {
     id: 2,
-    name: "Maria Rodriguez",
-    title: "Chief Operating Officer",
-    image: "/placeholder.svg?height=300&width=300",
-    bio: "Maria Rodriguez brings exceptional operational expertise to Voice for Women Foundation, overseeing the implementation of programs across 35 countries. With a background in international business and nonprofit management, she has been instrumental in scaling the foundation's impact while maintaining the highest standards of accountability and transparency. Maria previously served as Regional Director for several major international NGOs, where she developed innovative approaches to program delivery and community engagement. She holds an MBA from Wharton School and speaks five languages fluently. Her multicultural background and deep understanding of diverse communities enable her to build strong partnerships and ensure culturally sensitive program implementation. Maria is passionate about creating sustainable systems that empower local communities to drive their own development.",
+    name: "Mrs. Oorvasi Gunalan",
+    title: "Secretary & Treasurer",
+    image: "/oorvasi.JPG?height=300&width=300",
+    bio: "With a strong academic background in mathematics and an unyielding passion for community welfare, Mrs. Oorvasi Gunalan exemplifies compassion and resilience. She has played a pivotal role in shaping the Foundation’s operations and outreach. Her dedication to counselling women, managing programs, and sustaining grassroots engagement makes her an invaluable force behind the organisation’s impact.",
     achievements: ["Wharton Leadership Award", "International Development Excellence", "Community Impact Recognition"],
     social: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/goorvasi/",
       twitter: "#",
-      email: "maria@voiceforwomen.org",
+      email: "secretary@wecanvoiceforwomen.org",
     },
   },
   {
     id: 3,
-    name: "Dr. Amara Okafor",
-    title: "Director of Programs",
-    image: "/placeholder.svg?height=300&width=300",
-    bio: "Dr. Amara Okafor leads the foundation's program development and implementation, bringing deep expertise in education, healthcare, and economic empowerment initiatives. With a doctorate in Public Health from Johns Hopkins University, she has dedicated her career to addressing health disparities and improving access to quality healthcare for marginalized communities. Before joining Voice for Women, Dr. Okafor worked with the World Health Organization and Doctors Without Borders, implementing health programs in conflict-affected regions. Her research on maternal health and women's healthcare access has been published in leading medical journals. She is particularly passionate about integrating health services with education and economic empowerment programs to create holistic support systems for women and girls.",
+    name: "Mr. Deepak Radhakrishnan",
+    title: "Head - Advisory Board",
+    image: "/deepak.JPG?height=300&width=300",
+    bio: "He is a seasoned professional, qualified as a Taxation Advocate and CPA (USA), with deep expertise in accounting and taxation. He is passionately committed to uplifting business standards in India, especially among underserved communities. With a visionary mindset, he focuses on nurturing entrepreneurs and empowering women to build sustainable ventures. Deepak believes in transforming potential into professionalism, one business at a time. His mission is to create a generation of confident professionals and change-makers across India.",
     achievements: ["WHO Excellence Award", "Public Health Leadership", "Medical Research Recognition"],
     social: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/deepak-radhakrishnan-40a647156/",
       twitter: "#",
       email: "amara@voiceforwomen.org",
     },
   },
   {
     id: 4,
-    name: "Jennifer Chen",
-    title: "Chief Technology Officer",
-    image: "/placeholder.svg?height=300&width=300",
-    bio: "Jennifer Chen revolutionizes how Voice for Women Foundation leverages technology to amplify its impact and reach. With over 15 years of experience in tech innovation and digital transformation, she leads the development of cutting-edge platforms that connect women globally and provide access to resources, education, and opportunities. Jennifer previously held senior positions at major tech companies, where she specialized in building scalable solutions for social impact. She holds a Master's degree in Computer Science from MIT and is a recognized expert in using artificial intelligence and machine learning for social good. Under her leadership, the foundation has launched several award-winning digital platforms that have transformed how women access support and resources worldwide.",
+    name: "Prof Mr. A.Md.Abdulkadhar",
+    title: "Advisory Board",
+    image: "/abdulkadar.jpeg?height=300&width=300",
+    bio: "Professor A. Mohamed Abdul Kadhar is a distinguished educationist dedicated to the advancement of women. With a wealth of knowledge, he has authored a compelling array of articles and books that spotlight women winners, achievers, and entrepreneurs. Known for his inspiring and confident speaking style, he serves as a trusted consultant to a variety of educational institutions. His impactful work has been recognised with numerous prestigious awards. Currently, he is playing a pivotal role in shaping the We Can Voice for Women Foundation, offering valuable insights and expertise to empower women's voices and initiatives.",
     achievements: ["Tech for Good Award", "MIT Innovation Prize", "Digital Impact Recognition"],
     social: {
-      linkedin: "#",
+      linkedin: "https://www.linkedin.com/in/prof-abdul-kadhar-52877a332",
       twitter: "#",
-      email: "jennifer@voiceforwomen.org",
+      email: "Kadharchem@gmail.com",
     },
   },
 ]
@@ -116,38 +116,41 @@ export default function LeadershipPage() {
                           </div>
                           <div className="flex space-x-2 mt-2 md:mt-0">
                             <a
-                              href={leader.social.linkedin}
+                              target="_blank" href={leader.social.linkedin}
                               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                               aria-label={`${leader.name}'s LinkedIn`}
                             >
                               <Linkedin className="h-4 w-4 text-gray-700" />
                             </a>
-                            <a
+                            {/* <a
                               href={leader.social.twitter}
                               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                               aria-label={`${leader.name}'s Twitter`}
                             >
                               <Twitter className="h-4 w-4 text-gray-700" />
-                            </a>
+                            </a> */}
                             <a
-                              href={`mailto:${leader.social.email}`}
+                              href={`https://mail.google.com/mail/?view=cm&to=${leader.social.email}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
                               aria-label={`Email ${leader.name}`}
                             >
                               <Mail className="h-4 w-4 text-gray-700" />
                             </a>
+
                           </div>
                         </div>
 
                         <ReadMoreText text={leader.bio} maxLength={200} />
 
-                        <div className="mt-4 flex flex-wrap gap-2">
+                        {/* <div className="mt-4 flex flex-wrap gap-2">
                           {leader.achievements.map((achievement) => (
                             <Badge key={achievement} variant="secondary" className="bg-pink-100 text-pink-700">
                               {achievement}
                             </Badge>
                           ))}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </CardContent>
@@ -159,7 +162,7 @@ export default function LeadershipPage() {
       </section>
 
       {/* Advisory Board */}
-      <section className="py-12 md:py-16 px-4 bg-gray-50">
+      {/* <section className="py-12 md:py-16 px-4 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -210,7 +213,7 @@ export default function LeadershipPage() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Join Our Team */}
       <section className="py-12 md:py-16 px-4">
