@@ -97,7 +97,7 @@ export default function Footer() {
             </div>
             <div className="flex items-center space-x-3">
               <Phone className="h-5 w-5 text-pink-400" />
-              <span className="text-gray-300">+91 98765 43210</span>
+              <span className="text-gray-300">+91 9876543210</span>
             </div>
             <div className="flex items-center space-x-3">
               <MapPin className="h-5 w-5 text-pink-400" />
@@ -107,7 +107,7 @@ export default function Footer() {
 
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2024 Voice for Women Foundation. All rights reserved.
+              © 2025 Voice for Women Foundation. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm">
               <a href="/privacy" className="text-gray-400 hover:text-pink-400 transition-colors">
