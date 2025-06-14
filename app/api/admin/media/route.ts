@@ -59,3 +59,4 @@ export async function GET(request: NextRequest) {
     return Response.json({ success: false, message: "Failed to fetch media" }, { status: 500 })
   }
 }
+export const dynamic = "force-dynamic";
