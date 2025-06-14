@@ -3,7 +3,7 @@ export async function POST(request: Request) {
     const formData = await request.json()
 
     // Forward to Java backend
-    const response = await fetch("http://localhost:8080/api/contact", {
+    const response = await fetch("http://localhost:8080/api/volunteer", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,24 +16,24 @@ export async function POST(request: Request) {
     if (result.success) {
       return Response.json({
         success: true,
-        message: "Contact form submitted successfully",
+        message: "Volunteer application submitted successfully",
         id: result.id,
       })
     } else {
       return Response.json(
         {
           success: false,
-          message: result.message || "Failed to submit contact form",
+          message: result.message || "Failed to submit volunteer application",
         },
         { status: 500 },
       )
     }
   } catch (error) {
-    console.error("Contact API error:", error)
+    console.error("Volunteer API error:", error)
     return Response.json(
       {
         success: false,
-        message: "Failed to submit contact form",
+        message: "Failed to submit volunteer application",
       },
       { status: 500 },
     )
